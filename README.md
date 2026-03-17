@@ -40,3 +40,8 @@ FOR SELECT USING (true);
 ```
 
 
+- Before I even bothered styling, used figma to create a mockup for the two pages:
+![/public/images/login.png](public/images/login.png)
+![public/images/dashboard.png](public/images/dashboard.png)
+
+I have the login form working to a degree - supabase auth handles encryption and auth.user table automatically. But I have a confirm password field that should only show up on the sign up page not on a general log in. Also - I confirmed my email from supabase, but still not logging in properly... need to fix auth LOGIN and redirect

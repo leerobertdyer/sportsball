@@ -5,11 +5,11 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-my-green-light: #8df7cb;
-  --color-my-green-base: #5ead8c;
-  --color-my-green-dark: #428a6c;
-  --color-my-yellow-light: #f2db29;
-  --color-my-yellow-base: #e6cc05;
+  --color-my-green-light: #DBE5DF;
+  --color-my-green-base: #8FAA99;
+  --color-my-green-dark: #6E8677;
+  --color-my-yellow-light: #F3EBC0;
+  --color-my-yellow-base: #F8ECA8;
   --color-my-yellow-dark: #ab8c02;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
