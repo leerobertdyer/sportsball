@@ -1,6 +1,12 @@
-import LoginForm from "@/components/forms/LoginForm";
+"use client";
+import LoginForm from "@/components/auth/LoginForm";
+import SingUpForm from "@/components/auth/SignUpForm";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { useState } from "react";
 
 export default function Login() {
+  const [showLogin, setShowLogin] = useState(true);
   return (
     <div
       className="w-full h-screen "
@@ -10,10 +16,18 @@ export default function Login() {
       }}
     >
       <div className="w-full h-full bg-my-green-dark/50 py-10 flex flex-col justify-around items-center ">
-        <h1 className="text-center text-3xl text-my-yellow-light bg-my-green-dark p-2 rounded-md">
-          Sportsball
-        </h1>
-        <LoginForm />
+        <Card className="text-center text-3xl text-my-yellow-light bg-my-green-dark p-8 rounded-md h-fit">
+          <h1>Sportsball</h1>
+          <Button
+            variant="link"
+            type="button"
+            onClick={() => setShowLogin((prev) => !prev)}
+            className="text-xs"
+          >
+            {showLogin ? "Switch to Signup" : "Switch to login"}
+          </Button>
+          {showLogin ? <LoginForm /> : <SingUpForm />}
+        </Card>
       </div>
     </div>
   );

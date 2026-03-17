@@ -14,71 +14,39 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { loginOrSignup } from "@/app/auth/actions";
+import CheckEmailCard from "@/components/auth/CheckEmailCard";
+import { signUpSchema, onSubmit } from "@/components/auth/utils";
 
-const passwordSchema = z
-  .string()
-  .min(8, { message: "Password must be at least 8 characters long" })
-  .max(30, { message: "Password must be at most 30 characters long" })
-  .regex(/[a-z]/, {
-    message: "Password must contain at least one lowercase letter",
-  })
-  .regex(/[A-Z]/, {
-    message: "Password must contain at least one uppercase letter",
-  })
-  .regex(/[0-9]/, { message: "Password must contain at least one number" })
-  .regex(/[^a-zA-Z0-9]/, {
-    message: "Password must contain at least one special character",
-  });
+type FormValues = z.infer<typeof signUpSchema>;
 
-const schema = z
-  .object({
-    email: z.string().email("Please use a valid email"),
-    password: passwordSchema,
-    confirmPassword: passwordSchema,
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match!",
-    path: ["confirmPassword"],
-  });
-
-type FormValues = z.infer<typeof schema>;
-
-export default function LoginForm() {
+export default function SingUpForm() {
   const [checkEmail, setCheckEmail] = useState(false);
 
   const form = useForm<FormValues>({
     mode: "onBlur",
-    resolver: zodResolver(schema),
-    defaultValues: { email: "", password: "", confirmPassword: "" },
+    resolver: zodResolver(signUpSchema),
+    defaultValues: { email: "", password: "" },
   });
 
-  async function onSubmit(values: FormValues) {
-    const resp = await loginOrSignup(values);
-    if (resp.error?.toString().includes("Email not confirmed")) {
-      console.log(resp.error);
-      setCheckEmail(true);
-      toast("Please check your email to confirm login.");
-    }
+  if (checkEmail) return <CheckEmailCard email={form.getValues().email} />;
+
+  function submitCallback() {
+    setCheckEmail(true);
+    toast("Please check your email to confirm login.");
   }
 
-  if (checkEmail)
-    return (
-      <div className="bg-my-green-base text-my-yellow-light flex flex-col justify-center align-center">
-        <Card className="p-4 text-center">
-          <p>Please check your email</p>
-          <p>{form.getValues().email}</p>
-          <p>To finalize your login</p>
-        </Card>
-      </div>
-    );
-
+  function handleSubmit() {
+    onSubmit({
+      email: form.getValues().email,
+      password: form.getValues().password,
+      callBack: submitCallback,
+    });
+  }
   return (
     <Form {...form}>
-      <form 
+      <form
         suppressHydrationWarning
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-4 w-80 bg-white p-4 rounded-md"
       >
         <FormField
@@ -121,7 +89,7 @@ export default function LoginForm() {
           )}
         />
         <Button type="submit" className="w-full">
-          Login / Signup
+          Login
         </Button>
       </form>
     </Form>
