@@ -1,13 +1,11 @@
 import Stats from "@/components/dashboards/Stats";
-import LoginForm from "@/components/forms/LoginForm";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+    <div className="flex min-h-screen items-center justify-center">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16">
-        <h1 className="text-center">Sportsball</h1>
+        <h1 className="text-center text-3xl">Sportsball</h1>
         <Stats />
-        <LoginForm />
       </main>
     </div>
   );
