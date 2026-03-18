@@ -1,3 +1,4 @@
+import IconWrapper from "@/components/Stats/IconWrapper";
 import {
   Accordion,
   AccordionContent,
@@ -7,23 +8,30 @@ import {
 import { Card } from "@/components/ui/card";
 import { SportsEvent } from "@/lib/types";
 import { getViewableDateTime } from "@/lib/utils";
-import { Edit, Trash } from "lucide-react";
 import { FaMapPin } from "react-icons/fa6";
 
 export default function SportsAccordian({ e }: { e: SportsEvent }) {
   const eventLocation = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.venue.location)}`;
 
+  function handleDeleteEvent() {
+    console.log("todo - delete event")
+  }
+
+  function handleEditEvent() {
+    console.log("todo - edit event")
+  }
+
   return (
-    <Accordion type="multiple">
+    <Accordion type="multiple" suppressHydrationWarning>
       <AccordionItem value={e.id} className="border-none w-full">
         <AccordionTrigger className="hover:no-underline py-2 px-0 cursor-pointer w-full">
           <Card className="w-full p-4 hover:bg-slate-50 transition-colors">
             <div className="text-sm w-full flex justify-between items-center">
-              <div className="font-bold text-left">{e.name}</div>
+              <div className="font-bold text-left flex-1">{e.name}</div>
               <div className="text-center bg-my-yellow-light px-2 py-0.5 rounded text-xs">
                 {e.venue.venueName}
               </div>
-              <div className="text-muted-foreground text-right">
+              <div className="text-muted-foreground text-right flex-1">
                 {getViewableDateTime(e.time_start)}
               </div>
             </div>
@@ -45,9 +53,9 @@ export default function SportsAccordian({ e }: { e: SportsEvent }) {
               </a>
             </div>
           </div>
-          <div className="w-full flex justify-around text-xs text-black">
-            <Trash fill="red" className="cursor-pointer" />{" "}
-            <Edit fill="gold" className="cursor-pointer" />
+          <div className="w-full flex justify-center gap-7 text-xs text-black my-2">
+            <IconWrapper kind="trash" onClick={handleDeleteEvent} />
+            <IconWrapper kind="edit" onClick={handleEditEvent}/>
           </div>
         </AccordionContent>
       </AccordionItem>

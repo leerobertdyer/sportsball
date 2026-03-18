@@ -7,6 +7,7 @@ venue: SportsVenue;
 time_end: string;
 time_start: string;
 activity: string;
+userId: string;
 }
 
 export type SportsVenue = {
@@ -14,4 +15,5 @@ export type SportsVenue = {
     venueName: string;
     location: string;
     created_at: string;
+    userId: string;
 }

@@ -1,10 +1,6 @@
 import { loginOrSignup } from "@/app/auth/actions";
 import { z } from "zod";
 
-export function handleLoginOrSignup() {
-  console.log("TODO baby");
-}
-
 export const passwordSchema = z
   .string()
   .min(8, { message: "Password must be at least 8 characters long" })

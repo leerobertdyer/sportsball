@@ -1,11 +1,9 @@
-"use client"
+"use client";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 
-function handleAddEvent() {
-  console.log("TODO");
-}
-export default function AddEventButton() {
+export default function AddEventButton({handleAddEvent}: {handleAddEvent: () => void}) {
+
   return (
     <Button onClick={handleAddEvent}>
       <Plus fill="gold" />

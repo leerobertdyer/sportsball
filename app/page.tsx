@@ -1,5 +1,5 @@
 import LogoutButton from "@/components/auth/LogoutButton";
-import AddEventButton from "@/components/Stats/AddEventButton";
+import NewEvents from "@/components/Stats/NewEvents";
 import Stats from "@/components/Stats/Stats";
 import { Card } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ export default function Home() {
         <Card className="text-center text-3xl bg-my-green-dark p-8 rounded-md h-fit w-full flex flex-col items-center">
           <h1 className="text-center text-3xl">Sportsball</h1>
           <Stats />
-          <AddEventButton />
+          <NewEvents />
         </Card>
       </main>
       <LogoutButton />

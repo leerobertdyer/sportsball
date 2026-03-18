@@ -1,35 +1,49 @@
+"use server";
+import { NewSportsEvent, NewSportsVenue } from "@/components/Stats/utils";
 import { createClient } from "@/lib/supabase/server";
-import { SportsEvent, SportsVenue } from "@/lib/types";
+import { revalidatePath } from "next/cache";
 
-export async function createSportsEvent(
-  eventData: SportsEvent,
-  venueData: SportsVenue,
-) {
+export async function createSportsEvent({
+  event,
+  venue,
+}: {
+  venue: NewSportsVenue;
+  event: NewSportsEvent;
+}) {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
 
   const { data: newVenue, error: venueError } = await supabase
     .from("venues")
     .insert([
       {
-        venue_name: venueData.venueName,
-        location: venueData.location,
+        venue_name: venue.venueName,
+        location: venue.location,
+        user_id: user.id,
       },
     ])
     .select()
     .single();
 
-  if (venueError) throw venueError;
+  if (venueError) {
+    console.error("venueError:", venueError);
+    throw venueError;
+  }
 
   const { data: newEvent, error: eventError } = await supabase
     .from("events")
     .insert([
       {
-        name: eventData.name,
-        activity: eventData.activity,
-        details: eventData.details,
-        time_start: eventData.time_start, // Ensure this is ISO string
-        time_end: eventData.time_end,
-        venue_id: newVenue.id, // The linking piece!
+        name: event.name,
+        activity: event.activity,
+        details: event.details,
+        time_start: new Date(event.time_start).toISOString(),
+        time_end: new Date(event.time_end).toISOString(),
+        venue_id: newVenue.id, 
+        user_id: user.id,
       },
     ])
     .select(
@@ -40,13 +54,22 @@ export async function createSportsEvent(
     )
     .single();
 
-  if (eventError) throw eventError;
-
+  if (eventError) {
+    console.error("eventError:", eventError);
+    throw eventError;
+  }
+  
+  revalidatePath('/')
   return newEvent;
 }
 
 export async function getAllEvents() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
   const { data, error } = await supabase.from("events").select(`
     *,
     venue:venues (
@@ -56,5 +79,5 @@ export async function getAllEvents() {
     )
   `);
   console.log(data, error, typeof data);
-  return { data, error }
+  return { data, error };
 }
