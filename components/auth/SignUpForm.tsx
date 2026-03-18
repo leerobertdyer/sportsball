@@ -13,35 +13,33 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useState } from "react";
-import CheckEmailCard from "@/components/auth/CheckEmailCard";
-import { signUpSchema, onSubmit } from "@/components/auth/utils";
+import { Loader2 } from "lucide-react";
+import { signUp } from "@/app/auth/actions";
+import { signUpSchema } from "@/components/auth/utils";
 
 type FormValues = z.infer<typeof signUpSchema>;
 
 export default function SingUpForm() {
-  const [checkEmail, setCheckEmail] = useState(false);
-
   const form = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(signUpSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: "", password: "", confirmPassword: "" },
   });
 
-  if (checkEmail) return <CheckEmailCard email={form.getValues().email} />;
+  const isSubmitting = form.formState.isSubmitting;
 
-  function submitCallback() {
-    setCheckEmail(true);
-    toast("Please check your email to confirm login.");
+  async function handleSubmit() {
+    try {
+      const result = await signUp({
+        email: form.getValues().email,
+        password: form.getValues().password,
+      });
+      if (result?.error) toast.error(result.error);
+    } catch {
+      // Redirect threw (user is being sent to dashboard)
+    }
   }
 
-  function handleSubmit() {
-    onSubmit({
-      email: form.getValues().email,
-      password: form.getValues().password,
-      callBack: submitCallback,
-    });
-  }
   return (
     <Form {...form}>
       <form
@@ -90,9 +88,17 @@ export default function SingUpForm() {
         />
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="w-full min-w-[10rem] bg-my-green-dark text-my-yellow-light hover:bg-my-green-base"
         >
-          Sign Up
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
+              Signing up...
+            </>
+          ) : (
+            "Sign Up"
+          )}
         </Button>
       </form>
     </Form>

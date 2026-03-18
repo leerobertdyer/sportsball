@@ -13,35 +13,33 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useState } from "react";
-import CheckEmailCard from "@/components/auth/CheckEmailCard";
-import { loginSchema, onSubmit } from "@/components/auth/utils";
+import { Loader2 } from "lucide-react";
+import { login } from "@/app/auth/actions";
+import { loginSchema } from "@/components/auth/utils";
 
 type FormValues = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
-  const [checkEmail, setCheckEmail] = useState(false);
-
   const form = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  if (checkEmail) return <CheckEmailCard email={form.getValues().email} />;
+  const isSubmitting = form.formState.isSubmitting;
 
-  function submitCallback() {
-    setCheckEmail(true);
-    toast("Please check your email to confirm login.");
+  async function handleSubmit() {
+    try {
+      const result = await login({
+        email: form.getValues().email,
+        password: form.getValues().password,
+      });
+      if (result?.error) toast.error(result.error);
+    } catch {
+      // Redirect threw (user is being sent to dashboard)
+    }
   }
 
-  function handleSubmit() {
-    onSubmit({
-      email: form.getValues().email,
-      password: form.getValues().password,
-      callBack: submitCallback,
-    });
-  }
   return (
     <Form {...form}>
       <form
@@ -77,9 +75,17 @@ export default function LoginForm() {
         />
         <Button
           type="submit"
+          disabled={isSubmitting}
           className="w-full min-w-[10rem] bg-my-green-dark text-my-yellow-light hover:bg-my-green-base"
         >
-          Login
+          {isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 size-4 animate-spin" aria-hidden />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
         </Button>
       </form>
     </Form>

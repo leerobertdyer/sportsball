@@ -80,3 +80,11 @@ But since shadcn did not follow this in their ui folder I decided not to either.
 Additionally, it felt right since this was a limited app to keep all stats dashboard related components as siblings, but in a larger app I would have spread these out a bit more based on type of component. 
 
 Overall this was a highly engaging and challenging implementation and I learned and relearned a lot in the process about Next internals (Throwing for redirects for example), and how to use supabase again.
+
+Was about done - but the auth buttons were not showing up in deployment. Worked fine locally but showed up with no width or color. I am still not sure how this happened, but to fix it I switched to custom styles for each and now they are viewable again. 
+
+I also noticed just now that if you type the wrong password there is no feedback so adding some error handling as a last bit of polish to the auth flow.
+
+Another bug - you are able to sign in with a new user from login form. Originally I designed it this way - a single form for login/signup but I ended up switching to two forms because I didn't want to have to confirm my password to log in, but when I did that I kept the working function. Now I'm splitting them up so we don't have accidental signups when there are typos in emails during login
+
+I removed the email check for supabase - in real life implementation I would keep this on, but as this is a demo I'm fine with the easy access. Removing the now unused component

@@ -1,4 +1,3 @@
-import { loginOrSignup } from "@/app/auth/actions";
 import { z } from "zod";
 
 export const passwordSchema = z
@@ -31,12 +30,4 @@ export const loginSchema = z
   .object({
     email: z.string().email("Please use a valid email"),
     password: passwordSchema,
-  })
-
-  export async function onSubmit({email, password, callBack}: {email: string, password: string, callBack: () => void}) {
-    const resp = await loginOrSignup({email, password});
-    if (resp.error?.toString().includes("Email not confirmed")) {
-      console.error(resp.error);
-      callBack();
-    }
-  }
+  });

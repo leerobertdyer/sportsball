@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { loginOrSignup, logout } from "./actions";
+import { login, signUp, logout } from "./actions";
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
@@ -18,7 +18,7 @@ vi.mock("next/cache", () => ({
 
 const REDIRECT_THROW = new Error("NEXT_REDIRECT");
 
-describe("loginOrSignup", () => {
+describe("login", () => {
   beforeEach(() => {
     vi.mocked(createClient).mockReset();
     vi.mocked(redirect).mockReset();
@@ -39,7 +39,7 @@ describe("loginOrSignup", () => {
     vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
 
     await expect(
-      loginOrSignup({ email: "u@x.com", password: "ValidPass1!" }),
+      login({ email: "u@x.com", password: "ValidPass1!" }),
     ).rejects.toThrow(REDIRECT_THROW);
 
     expect(redirect).toHaveBeenCalledWith("/");
@@ -49,51 +49,25 @@ describe("loginOrSignup", () => {
     });
   });
 
-  it("calls signUp and redirects when credentials invalid and signUp succeeds", async () => {
+  it("returns error for invalid credentials (does not call signUp)", async () => {
     const mockSupabase = {
       auth: {
         signInWithPassword: vi.fn().mockResolvedValue({
           data: { user: null },
           error: { message: "Invalid login credentials" },
         }),
-        signUp: vi.fn().mockResolvedValue({ data: { user: {} }, error: null }),
       },
     };
     vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
 
-    await expect(
-      loginOrSignup({ email: "new@x.com", password: "ValidPass1!" }),
-    ).rejects.toThrow(REDIRECT_THROW);
-
-    expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
-      email: "new@x.com",
-      password: "ValidPass1!",
-    });
-    expect(redirect).toHaveBeenCalledWith("/");
-  });
-
-  it("returns signUp error when credentials invalid and signUp fails", async () => {
-    const mockSupabase = {
-      auth: {
-        signInWithPassword: vi.fn().mockResolvedValue({
-          data: { user: null },
-          error: { message: "Invalid login credentials" },
-        }),
-        signUp: vi.fn().mockResolvedValue({
-          data: null,
-          error: { message: "Sign up failed" },
-        }),
-      },
-    };
-    vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
-
-    const result = await loginOrSignup({
-      email: "new@x.com",
+    const result = await login({
+      email: "u@x.com",
       password: "ValidPass1!",
     });
 
-    expect(result).toEqual({ error: "Sign up failed" });
+    expect(result).toEqual({ error: "Invalid email or password." });
     expect(redirect).not.toHaveBeenCalled();
+    expect(mockSupabase.auth).not.toHaveProperty("signUp");
   });
 
   it("returns sign-in error for other errors (e.g. Email not confirmed)", async () => {
@@ -108,13 +82,63 @@ describe("loginOrSignup", () => {
     };
     vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
 
-    const result = await loginOrSignup({
+    const result = await login({
       email: "u@x.com",
       password: "ValidPass1!",
     });
 
-    expect(result).toEqual({ error: signInError });
+    expect(result).toEqual({ error: "Email not confirmed" });
     expect(redirect).not.toHaveBeenCalled();
+  });
+});
+
+describe("signUp", () => {
+  beforeEach(() => {
+    vi.mocked(createClient).mockReset();
+    vi.mocked(redirect).mockReset();
+    vi.mocked(redirect).mockImplementation(() => {
+      throw REDIRECT_THROW;
+    });
+  });
+
+  it("redirects to / when signUp succeeds", async () => {
+    const mockSupabase = {
+      auth: {
+        signUp: vi.fn().mockResolvedValue({ data: { user: {} }, error: null }),
+      },
+    };
+    vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
+
+    await expect(
+      signUp({ email: "new@x.com", password: "ValidPass1!" }),
+    ).rejects.toThrow(REDIRECT_THROW);
+
+    expect(redirect).toHaveBeenCalledWith("/");
+    expect(mockSupabase.auth.signUp).toHaveBeenCalledWith({
+      email: "new@x.com",
+      password: "ValidPass1!",
+    });
+  });
+
+  it("returns error when signUp fails", async () => {
+    const mockSupabase = {
+      auth: {
+        signUp: vi.fn().mockResolvedValue({
+          data: null,
+          error: { message: "User already registered" },
+        }),
+      },
+    };
+    vi.mocked(createClient).mockResolvedValue(mockSupabase as never);
+
+    const result = await signUp({
+      email: "new@x.com",
+      password: "ValidPass1!",
+    });
+
+    expect(result).toEqual({
+      error: "An account with this email already exists. Try logging in.",
+    });
   });
 });
 
