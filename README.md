@@ -15,7 +15,7 @@
   - date, start time, end time, and timezone
   - combine them all together to create the timestampz type required prior to sending to supabase
 
-Event DML
+Sketched psuedo data
     id: primary
     created_at: auto timestamp
     venue: string
@@ -23,13 +23,13 @@ Event DML
     time_end: timestampz
     activity: enum // as in which sport, but also left open to be any kind of event (meet and greet with pro athelete etc...)
 
-    should I make table of venues? I think not for now - if I can get through the rest I may specify which venues and use an id to reference. I did make activity an Enum "Pickleball" | "Tennis" | "Basketball" | "Soccer" (sorry football got lazy)
+- should I make table of venues? I think not for now - if I can get through the rest I may specify which venues and use an id to reference. I did make activity an Enum "Pickleball" | "Tennis" | "Basketball" | "Soccer" (sorry football got lazy)
 
-    To make the enum used the sql editor:
+To make the enum used the sql editor:
 
-    ```SQL
-    CREATE TYPE activity AS ENUM('Soccer', 'Basketball', 'Tennis', 'Pickleball')
-    ```
+```SQL
+CREATE TYPE activity AS ENUM('Soccer', 'Basketball', 'Tennis', 'Pickleball')
+```
  
 
  To access the rls for events a wide open SELECT sql statement:
@@ -45,10 +45,38 @@ FOR SELECT USING (true);
 
 I have the login form working to a degree - supabase auth handles encryption and auth.user table automatically. But I have a confirm password field that should only show up on the sign up page not on a general log in. Also - I confirmed my email from supabase, but still not logging in properly... need to fix auth LOGIN and redirect
 
-A lot of issues with auth - because I was attemptint to use both next.js AND supabase auth (forgot I started with next and switched to supabase) so the proxy was fighting me. Working well now with both Sign In and Log in page that are using shared utils and "Check Email" card for email validation.
+A lot of issues with auth - because I was attempting to use both next.js AND supabase auth (forgot I started with next and switched to supabase) so the proxy was fighting me. Working well now with both Sign In and Log in page that are using shared utils and "Check Email" card for email validation.
 
 Because of RLS - lots of policies needed to be added - one each for reading each table and to ensure you only see your own data, and another for each table for inserts, another for deletes and another for edits. 
 
 Edit will require another level of work: prefilling forms and resubmitting the diff between what is already in database and what is in the form. 
 
-At about 10 hours of work at this point. So much for 2-3 hours.
+I've definitely blown past the 2-3 hour mark. 
+
+Implemented date-fns for date manipulation and date-fns-tz to create a timezone helper so I can use only valid timezones but also restrict them to areas in US and Canada. Timezones were a huge pain at my first job and I recall we used a library possibly luxon, but it was still quite a pain. This is a simplified version and not global which would take a good deal more time and testing.
+
+Update working reusing the same forms. Proud of my ability to reuse the forms and the modularized utils for each of them. This meant I could fix things in one place and kept ui logic away from business logic. 
+
+Having AI help with making tests now so I don't break anything while I'm at the eleventh hour (quite literally) It went a bit crazy, I trimmed them back to just server actions and the raw util functions.
+
+Using Cursor to speed up at the end of this and implement the remaining feature: search by venue and name. 
+
+Added a custom domain to my personal site to host this at [sportsball.leedyer.com](https://sportsball.leedyer.com)
+
+Implemented Suspense in SearchAnd Filter to allow showing a basic shape while running queries. 
+
+Added [documentation](/docs/search-and-filter-implementation.md) for the [search-and-fiilter.tsx](/components/Stats/SearchAndFilter.tsx)
+
+Note: I usually keep components each in a folder like
+ Components/
+   FormOne
+     FormOne.tsx
+     utils.ts
+   ButtonOne
+     ButtonOne.tsx
+     utils.ts
+     style.css
+But since shadcn did not follow this in their ui folder I decided not to either. 
+Additionally, it felt right since this was a limited app to keep all stats dashboard related components as siblings, but in a larger app I would have spread these out a bit more based on type of component. 
+
+Overall this was a highly engaging and challenging implementation and I learned and relearned a lot in the process about Next internals (Throwing for redirects for example), and how to use supabase again.

@@ -131,7 +131,10 @@ export async function deleteSportsEvent(id: string) {
   revalidatePath("/");
 }
 
-export async function getAllEvents() {
+export async function getAllEvents(filters?: {
+  search?: string;
+  sport?: string;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -140,14 +143,26 @@ export async function getAllEvents() {
     return { data: [], error: "No user session found" };
   }
 
-  const { data, error } = await supabase.from("events").select(`
+  let query = supabase.from("events").select(
+    `
     *,
     venue:venues (
       id,
       venueName: venue_name,
       location
     )
-  `);
-  console.log(data, error, typeof data);
+  `
+  );
+
+  const search = filters?.search?.trim();
+  const sport = filters?.sport?.trim();
+  if (search) {
+    query = query.ilike("name", `%${search}%`);
+  }
+  if (sport) {
+    query = query.eq("activity", sport);
+  }
+
+  const { data, error } = await query;
   return { data, error };
 }
