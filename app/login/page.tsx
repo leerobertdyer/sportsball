@@ -22,7 +22,7 @@ export default function Login() {
             variant="link"
             type="button"
             onClick={() => setShowLogin((prev) => !prev)}
-            className="text-xs"
+            className="text-xs text-my-yellow-light underline hover:text-my-yellow-base"
           >
             {showLogin ? "Switch to Signup" : "Switch to login"}
           </Button>

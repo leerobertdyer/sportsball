@@ -88,7 +88,10 @@ export default function SingUpForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
+        <Button
+          type="submit"
+          className="w-full min-w-[10rem] bg-my-green-dark text-my-yellow-light hover:bg-my-green-base"
+        >
           Sign Up
         </Button>
       </form>
