@@ -45,3 +45,5 @@ FOR SELECT USING (true);
 ![public/images/dashboard.png](public/images/dashboard.png)
 
 I have the login form working to a degree - supabase auth handles encryption and auth.user table automatically. But I have a confirm password field that should only show up on the sign up page not on a general log in. Also - I confirmed my email from supabase, but still not logging in properly... need to fix auth LOGIN and redirect
+
+A lot of issues with auth - because I was attemptint to use both next.js AND supabase auth (forgot I started with next and switched to supabase) so the proxy was fighting me. Working well now with both Sign In and Log in page that are using shared utils and "Check Email" card for email validation.

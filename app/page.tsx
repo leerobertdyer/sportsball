@@ -1,14 +1,19 @@
 import LogoutButton from "@/components/auth/LogoutButton";
-import Stats from "@/components/dashboards/Stats";
+import AddEventButton from "@/components/Stats/AddEventButton";
+import Stats from "@/components/Stats/Stats";
+import { Card } from "@/components/ui/card";
 
 export default function Home() {
   return (
-    <div className="" >
+    <div className="">
       <main className="flex w-full flex-col items-center justify-around py-32 px-16">
-        <h1 className="text-center text-3xl">Sportsball</h1>
-        <Stats />
+        <Card className="text-center text-3xl bg-my-green-dark p-8 rounded-md h-fit w-full flex flex-col items-center">
+          <h1 className="text-center text-3xl">Sportsball</h1>
+          <Stats />
+          <AddEventButton />
+        </Card>
       </main>
-        <LogoutButton />
+      <LogoutButton />
     </div>
   );
 }

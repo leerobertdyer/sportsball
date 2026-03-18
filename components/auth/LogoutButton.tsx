@@ -9,7 +9,7 @@ async function handleLogout() {
 
 export default function LogoutButton() {
   return (
-    <div className="w-full h-fit flex justify-center">
+    <div className="w-fit h-fit flex justify-center absolute bottom-10 left-1/2 -translate-x-1/2">
       <Button
         variant="link"
         className=""
