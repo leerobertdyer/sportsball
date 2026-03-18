@@ -84,7 +84,7 @@ export default function NewEventForm({
 
   return (
     <Form {...form}>
-      {form.formState.errors && (
+      {Object.keys(form.formState.errors).length > 0 && (
         <p className="text-red-600 text-xs">
           {JSON.stringify(form.formState.errors, null, 2)}
         </p>
