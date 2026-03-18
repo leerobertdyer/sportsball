@@ -1,3 +1,4 @@
+"use client";
 import IconWrapper from "@/components/Stats/IconWrapper";
 import {
   Accordion,
@@ -6,19 +7,27 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Card } from "@/components/ui/card";
+import { deleteSportsEvent } from "@/lib/supabase/actions";
 import { SportsEvent } from "@/lib/types";
 import { getViewableDateTime } from "@/lib/utils";
 import { FaMapPin } from "react-icons/fa6";
+import { toast } from "sonner";
 
 export default function SportsAccordian({ e }: { e: SportsEvent }) {
   const eventLocation = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.venue.location)}`;
 
-  function handleDeleteEvent() {
-    console.log("todo - delete event")
+  async function handleDeleteEvent() {
+    const promise = deleteSportsEvent(e.id);
+
+    toast.promise(promise, {
+      loading: "Deleting event...",
+      success: "Event deleted!",
+      error: "Could not delete event.",
+    });
   }
 
   function handleEditEvent() {
-    console.log("todo - edit event")
+    console.log("todo - edit event");
   }
 
   return (
@@ -55,7 +64,7 @@ export default function SportsAccordian({ e }: { e: SportsEvent }) {
           </div>
           <div className="w-full flex justify-center gap-7 text-xs text-black my-2">
             <IconWrapper kind="trash" onClick={handleDeleteEvent} />
-            <IconWrapper kind="edit" onClick={handleEditEvent}/>
+            <IconWrapper kind="edit" onClick={handleEditEvent} />
           </div>
         </AccordionContent>
       </AccordionItem>

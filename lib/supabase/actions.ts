@@ -63,6 +63,19 @@ export async function createSportsEvent({
   return newEvent;
 }
 
+export async function deleteSportsEvent(id: string) {
+  const supabase = await createClient();
+  
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw error;
+
+  revalidatePath('/');
+}
+
 export async function getAllEvents() {
   const supabase = await createClient();
   const {
