@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import {
   Activity,
   NewSportsEvent,
@@ -28,9 +27,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  formatEventTime,
-  RestrictedTimeZones,
-  RestrictedTz,
+  buildTimestampFromPieces,
+  DEFAULT_TIME_ZONE,
+  generateDateAndTimeDefaults,
+  US_CANADA_TIME_ZONES,
 } from "@/lib/utils";
 
 type FormValues = z.infer<typeof eventSchema>;
@@ -44,35 +44,42 @@ export default function NewEventForm({
   event: NewSportsEvent | null;
   venue: NewSportsVenue;
 }) {
+  const defaultZone = DEFAULT_TIME_ZONE;
+  const startDefaults = event
+    ? generateDateAndTimeDefaults(event.time_start, defaultZone)
+    : { date: "", time: "" };
+  const endDefaults = event
+    ? generateDateAndTimeDefaults(event.time_end, defaultZone)
+    : { date: "", time: "" };
+
   const form = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(eventSchema),
     defaultValues: {
       name: event?.name ?? "",
       details: event?.details ?? "",
-      time_start: event?.time_start.split("T")[0] ?? "",
-      time_end: event?.time_end.split("T")[0] ?? "",
-      event_date: event ? new Date(event.time_start).toDateString() : "",
-      time_zone: RestrictedTimeZones[0], // TODO: update to use event time zone using date manipulation
+      time_start: startDefaults.time,
+      time_end: endDefaults.time,
+      event_date: startDefaults.date,
+      time_zone: defaultZone,
       activity: (event?.activity as Activity) ?? "Pickleball",
       venue,
     },
   });
 
   async function handleSubmit(data: FormValues) {
-    console.log(data)
-    const startTime = formatEventTime(
+    const startIso = buildTimestampFromPieces(
+      data.event_date,
       data.time_start,
-      data.time_zone as RestrictedTz,
+      data.time_zone,
     );
-    const endTime = formatEventTime(
+    const endIso = buildTimestampFromPieces(
+      data.event_date,
       data.time_end,
-      data.time_zone as RestrictedTz,
+      data.time_zone,
     );
-
-    handleSetEvent({ ...data, time_start: startTime, time_end: endTime });
+    await handleSetEvent({ ...data, time_start: startIso, time_end: endIso });
     form.reset();
-    toast.success("Event added successfully!");
   }
 
   return (
@@ -172,7 +179,7 @@ export default function NewEventForm({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {RestrictedTimeZones.map((item) => (
+                  {US_CANADA_TIME_ZONES.map((item) => (
                     <SelectItem key={item} value={item}>
                       {item}
                     </SelectItem>

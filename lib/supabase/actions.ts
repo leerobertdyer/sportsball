@@ -40,8 +40,8 @@ export async function createSportsEvent({
         name: event.name,
         activity: event.activity,
         details: event.details,
-        time_start: new Date(event.time_start).toISOString(),
-        time_end: new Date(event.time_end).toISOString(),
+        time_start: event.time_start,
+        time_end: event.time_end,
         venue_id: newVenue.id,
         user_id: user.id,
       },
@@ -101,8 +101,8 @@ export async function updateEvent({
       name: event.name,
       activity: event.activity,
       details: event.details,
-      time_start: new Date(event.time_start).toISOString(),
-      time_end: new Date(event.time_end).toISOString(),
+      time_start: event.time_start,
+      time_end: event.time_end,
       // venue_id remains the same, so no need to update it
     })
     .eq("id", eventId)

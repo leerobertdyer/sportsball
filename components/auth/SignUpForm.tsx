@@ -56,7 +56,7 @@ export default function SingUpForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="you@example.com" />
+                <Input {...field} placeholder="you@example.com" autoComplete="email" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -69,7 +69,7 @@ export default function SingUpForm() {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" />
+                <Input {...field} type="password" autoComplete="new-password" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -82,7 +82,7 @@ export default function SingUpForm() {
             <FormItem>
               <FormLabel>Confirm Password</FormLabel>
               <FormControl>
-                <Input {...field} type="password" />
+                <Input {...field} type="password" autoComplete="new-password" />
               </FormControl>
               <FormMessage />
             </FormItem>

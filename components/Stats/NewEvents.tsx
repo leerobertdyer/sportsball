@@ -48,21 +48,26 @@ export default function NewEvents({
 
   async function handleSetEvent(e: NewSportsEvent) {
     if (!e || !newVenue) return;
-    if (isEditing) {
-      const venuewWithId = newVenue as SportsVenue;
-      updateEvent({
-        eventId: event!.id,
-        venueId: venuewWithId.id,
-        event: e,
-        venue: newVenue,
-      });
-    } else {
-      createSportsEvent({ event: e, venue: newVenue });
+    try {
+      if (isEditing) {
+        const venueWithId = newVenue as SportsVenue;
+        await updateEvent({
+          eventId: event!.id,
+          venueId: venueWithId.id,
+          event: e,
+          venue: newVenue,
+        });
+      } else {
+        await createSportsEvent({ event: e, venue: newVenue });
+      }
+      setFormToShow("none");
+      if (callback) callback();
+      await getAllEvents();
+      toast.success("Event added successfully!");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      toast.error(message);
     }
-    setFormToShow("none");
-    toast("Event Added!");
-    if (callback) callback();
-    await getAllEvents();
   }
 
   if (formToShow === "venue")
