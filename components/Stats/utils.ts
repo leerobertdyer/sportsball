@@ -16,7 +16,9 @@ export const eventSchema = z.object({
   name: z.string(),
   details: z.string(),
   venue: venueSchema,
-  time_end: z.string(),
+  time_zone: z.string(),
+  event_date: z.string(),
   time_start: z.string(),
+  time_end: z.string(),
   activity: z.enum(activities),
 });

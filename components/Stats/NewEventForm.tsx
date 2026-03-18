@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
-    Activity,
+  Activity,
   NewSportsEvent,
   NewSportsVenue,
   activities,
@@ -27,18 +27,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import {
+  formatEventTime,
+  RestrictedTimeZones,
+  RestrictedTz,
+} from "@/lib/utils";
 
 type FormValues = z.infer<typeof eventSchema>;
 
 export default function NewEventForm({
   handleSetEvent,
   event,
-  venue
+  venue,
 }: {
   handleSetEvent: (v: NewSportsEvent) => void;
-  event: NewSportsEvent | null
-  venue: NewSportsVenue
+  event: NewSportsEvent | null;
+  venue: NewSportsVenue;
 }) {
   const form = useForm<FormValues>({
     mode: "onBlur",
@@ -46,22 +50,38 @@ export default function NewEventForm({
     defaultValues: {
       name: event?.name ?? "",
       details: event?.details ?? "",
-      time_start: event?.time_start.split('T')[0] ?? "",
-      time_end: event?.time_end.split('T')[0] ?? "",
-      activity: event?.activity as Activity ?? "Pickleball", 
-      venue
+      time_start: event?.time_start.split("T")[0] ?? "",
+      time_end: event?.time_end.split("T")[0] ?? "",
+      event_date: event ? new Date(event.time_start).toDateString() : "",
+      time_zone: RestrictedTimeZones[0], // TODO: update to use event time zone using date manipulation
+      activity: (event?.activity as Activity) ?? "Pickleball",
+      venue,
     },
   });
 
   async function handleSubmit(data: FormValues) {
-    toast.success("Event added successfully!");
-    handleSetEvent(data);
+    console.log(data)
+    const startTime = formatEventTime(
+      data.time_start,
+      data.time_zone as RestrictedTz,
+    );
+    const endTime = formatEventTime(
+      data.time_end,
+      data.time_zone as RestrictedTz,
+    );
+
+    handleSetEvent({ ...data, time_start: startTime, time_end: endTime });
     form.reset();
+    toast.success("Event added successfully!");
   }
 
   return (
     <Form {...form}>
-      <p className="text-red-600 text-xs">{JSON.stringify(form.formState.errors, null, 2)}</p>
+      {form.formState.errors && (
+        <p className="text-red-600 text-xs">
+          {JSON.stringify(form.formState.errors, null, 2)}
+        </p>
+      )}
 
       <form
         suppressHydrationWarning
@@ -102,12 +122,25 @@ export default function NewEventForm({
         />
         <FormField
           control={form.control}
+          name="event_date"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Date Of Event</FormLabel>
+              <FormControl>
+                <Input {...field} type="date" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
           name="time_start"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Time Start</FormLabel>
               <FormControl>
-                <Input {...field} type="date" />
+                <Input {...field} type="time" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -120,9 +153,32 @@ export default function NewEventForm({
             <FormItem>
               <FormLabel>Time End</FormLabel>
               <FormControl>
-                <Input {...field} type="date" />
+                <Input {...field} type="time" />
               </FormControl>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="time_zone"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Time Zone</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select A Timezone" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {RestrictedTimeZones.map((item) => (
+                    <SelectItem key={item} value={item}>
+                      {item}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </FormItem>
           )}
         />

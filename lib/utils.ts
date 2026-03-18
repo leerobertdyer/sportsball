@@ -12,3 +12,19 @@ export function getViewableDateTime(supabaseTime: string) {
   console.log(formattedDate);
   return formattedDate;
 }
+
+export const RestrictedTimeZones = ['America/New_York', 'America/Chicago', 'America/Los_Angeles']
+export type RestrictedTz = 'America/New_York' | 'America/Chicago' | 'America/Los_Angeles'
+
+export function formatEventTime(
+  dateString: string,
+  timeZone: RestrictedTz = "America/New_York",
+) {
+  const date = new Date(dateString);
+
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: timeZone, 
+  }).format(date);
+}
