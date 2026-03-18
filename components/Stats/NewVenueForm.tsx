@@ -19,13 +19,15 @@ type FormValues = z.infer<typeof venueSchema>;
 
 export default function NewVenueForm({
   handleSetVenue,
+  venue
 }: {
   handleSetVenue: (v: NewSportsVenue) => void;
+  venue?: NewSportsVenue;
 }) {
   const form = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(venueSchema),
-    defaultValues: { venueName: "", location: "" },
+    defaultValues: { venueName: venue?.venueName ?? "", location: venue?.location ?? "" },
   });
 
   async function handleSubmit(data: FormValues) {

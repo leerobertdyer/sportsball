@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import {
+    Activity,
   NewSportsEvent,
   NewSportsVenue,
   activities,
@@ -27,24 +28,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+
 type FormValues = z.infer<typeof eventSchema>;
 
 export default function NewEventForm({
   handleSetEvent,
+  event,
   venue
 }: {
   handleSetEvent: (v: NewSportsEvent) => void;
+  event: NewSportsEvent | null
   venue: NewSportsVenue
 }) {
   const form = useForm<FormValues>({
     mode: "onBlur",
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      name: "",
-      details: "",
-      time_start: "",
-      time_end: "",
-      activity: "Pickleball",
+      name: event?.name ?? "",
+      details: event?.details ?? "",
+      time_start: event?.time_start.split('T')[0] ?? "",
+      time_end: event?.time_end.split('T')[0] ?? "",
+      activity: event?.activity as Activity ?? "Pickleball", 
       venue
     },
   });
@@ -54,7 +58,6 @@ export default function NewEventForm({
     handleSetEvent(data);
     form.reset();
   }
-
 
   return (
     <Form {...form}>

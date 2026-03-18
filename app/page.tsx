@@ -10,7 +10,7 @@ export default function Home() {
         <Card className="text-center text-3xl bg-my-green-dark p-8 rounded-md h-fit w-full flex flex-col items-center">
           <h1 className="text-center text-3xl">Sportsball</h1>
           <Stats />
-          <NewEvents />
+          <NewEvents isEditing={false} event={null}/>
         </Card>
       </main>
       <LogoutButton />

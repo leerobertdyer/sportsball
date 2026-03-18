@@ -42,7 +42,7 @@ export async function createSportsEvent({
         details: event.details,
         time_start: new Date(event.time_start).toISOString(),
         time_end: new Date(event.time_end).toISOString(),
-        venue_id: newVenue.id, 
+        venue_id: newVenue.id,
         user_id: user.id,
       },
     ])
@@ -58,22 +58,77 @@ export async function createSportsEvent({
     console.error("eventError:", eventError);
     throw eventError;
   }
-  
-  revalidatePath('/')
+
+  revalidatePath("/");
   return newEvent;
+}
+
+export async function updateEvent({
+  eventId,
+  venueId,
+  event,
+  venue,
+}: {
+  eventId: string;
+  venueId: string;
+  venue: NewSportsVenue;
+  event: NewSportsEvent;
+}) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { error: venueError } = await supabase
+    .from("venues")
+    .update({
+      venue_name: venue.venueName,
+      location: venue.location,
+    })
+    .eq("id", venueId)
+    .eq("user_id", user.id); // Security: ensure user owns this venue
+
+  if (venueError) {
+    console.error("venueUpdateError:", venueError);
+    throw venueError;
+  }
+
+  const { data: updatedEvent, error: eventError } = await supabase
+    .from("events")
+    .update({
+      name: event.name,
+      activity: event.activity,
+      details: event.details,
+      time_start: new Date(event.time_start).toISOString(),
+      time_end: new Date(event.time_end).toISOString(),
+      // venue_id remains the same, so no need to update it
+    })
+    .eq("id", eventId)
+    .eq("user_id", user.id) // Security: ensure user owns this event
+    .select(`*, venue:venues(*)`)
+    .single();
+
+  if (eventError) {
+    console.error("eventUpdateError:", eventError);
+    throw eventError;
+  }
+
+  // 3. Refresh the UI
+  revalidatePath("/");
+
+  return updatedEvent;
 }
 
 export async function deleteSportsEvent(id: string) {
   const supabase = await createClient();
-  
-  const { error } = await supabase
-    .from('events')
-    .delete()
-    .eq('id', id);
+
+  const { error } = await supabase.from("events").delete().eq("id", id);
 
   if (error) throw error;
 
-  revalidatePath('/');
+  revalidatePath("/");
 }
 
 export async function getAllEvents() {

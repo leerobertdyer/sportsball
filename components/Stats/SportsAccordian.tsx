@@ -1,5 +1,6 @@
 "use client";
 import IconWrapper from "@/components/Stats/IconWrapper";
+import NewEvents from "@/components/Stats/NewEvents";
 import {
   Accordion,
   AccordionContent,
@@ -10,10 +11,13 @@ import { Card } from "@/components/ui/card";
 import { deleteSportsEvent } from "@/lib/supabase/actions";
 import { SportsEvent } from "@/lib/types";
 import { getViewableDateTime } from "@/lib/utils";
+import { useState } from "react";
 import { FaMapPin } from "react-icons/fa6";
 import { toast } from "sonner";
 
 export default function SportsAccordian({ e }: { e: SportsEvent }) {
+  const [showEditForm, setShowEditForm] = useState(false);
+
   const eventLocation = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(e.venue.location)}`;
 
   async function handleDeleteEvent() {
@@ -27,8 +31,16 @@ export default function SportsAccordian({ e }: { e: SportsEvent }) {
   }
 
   function handleEditEvent() {
-    console.log("todo - edit event");
+    setShowEditForm(true)
   }
+
+  if (showEditForm)
+    return (
+      <div className="absolute inset-0 bg-white flex flex-col justify-center items-center">
+        <h1>Edit Event</h1>
+        <NewEvents isEditing={true} event={e} callback={() => setShowEditForm(false)}/>
+      </div>
+    );
 
   return (
     <Accordion type="multiple" suppressHydrationWarning>

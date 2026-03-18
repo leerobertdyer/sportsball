@@ -10,6 +10,7 @@ export const venueSchema = z.object({
 });
 
 export const activities = ["Soccer", "Tennis", "Basketball", "Pickleball"] as const;
+export type Activity = "Soccer" | "Tennis" | "Basketball" | "Pickleball"
 
 export const eventSchema = z.object({
   name: z.string(),
