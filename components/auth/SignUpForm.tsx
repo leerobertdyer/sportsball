@@ -89,7 +89,7 @@ export default function SingUpForm() {
           )}
         />
         <Button type="submit" className="w-full">
-          Login
+          Sign Up
         </Button>
       </form>
     </Form>

@@ -16,8 +16,8 @@ export default function Login() {
       }}
     >
       <div className="w-full h-full bg-my-green-dark/50 py-10 flex flex-col justify-around items-center ">
-        <Card className="text-center text-3xl bg-my-green-dark p-8 rounded-md h-fit">
-          <h1 className="text-my-yellow-light">Sportsball</h1>
+        <Card className="text-center bg-my-green-dark/90 p-8 rounded-md h-fit">
+          <h1 className="text-my-yellow-light text-[3rem]">Sportsball</h1>
           <Button
             variant="link"
             type="button"
