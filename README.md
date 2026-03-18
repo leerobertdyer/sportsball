@@ -3,12 +3,11 @@
 ## Built with Next.js, Tailwind, React, Supabase, and Shadcn.
 
 
-
-Notes in progress:
+## Notes taken in progress
 
 - `lib/supabase/` handles every call to supabase using a server side client which is re-created for each fetch [per their documentation](https://supabase.com/docs/guides/auth/server-side/creating-a-client?queryGroups=environment&environment=middleware) and utilizes the proxy (middleware) to intercept and validate each call with JWT tokens. I opted here to not even include the client.ts for browser side fetching as the instructions were to use actions and api/ routes instead.
 
-- Enabled Row Level Security knowing it would take more time to set up, but by default be way more secure. I've used this in the past and remember it giving me trouble, but ultimately worth the work. Basically IAM roles built in to supabase I think. Need permission to access each row ? ? ? will have to come back after I've implemented it.
+- Enabled Row Level Security knowing it will take more time to set up, but by default be more secure. I've used this in the past and remember it giving me trouble, but ultimately worth the work. Basically IAM roles for tables built in to Supabase. Nicer now than when I used it - the GUI works better. Going to try to use the sql editor when possible so I get more hands on with the data (And so I have a history to look back on)
 
 - Also enabled real time subscription though I'm less sure of this it seems like what I'd expect from a db: instant changes reflected.
 
