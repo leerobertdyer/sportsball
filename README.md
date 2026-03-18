@@ -1,6 +1,6 @@
-Sportball - All your sports in one place.
+# [Sportball](https://sportsball.leedyer.com/) - All your sports in one place.
 
-Built with Next.js, Tailwind, React, Supabase, and Shadcn.
+## Built with Next.js, Tailwind, React, Supabase, and Shadcn.
 
 
 

@@ -136,7 +136,9 @@ export async function getAllEvents() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
+  if (!user) {
+    return { data: [], error: "No user session found" };
+  }
 
   const { data, error } = await supabase.from("events").select(`
     *,
