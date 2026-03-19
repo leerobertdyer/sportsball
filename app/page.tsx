@@ -19,7 +19,7 @@ export default async function Home({ searchParams }: PageProps) {
 
   return (
     <div style={{ backgroundImage: 'url("/images/sportsball.png")', backgroundSize: 'cover' }}>
-      <main className="flex w-full flex-col items-center justify-around py-32 px-16">
+      <main className="flex w-full flex-col items-center justify-around py-32  sm:px-10 md:px-16">
         <Card className="text-center text-3xl bg-my-green-dark/50 p-8 rounded-md h-fit w-full flex flex-col items-center gap-4">
           <h1 className="text-center text-3xl">Sportsball</h1>
           <Suspense fallback={<div className="h-9 w-full max-w-md animate-pulse rounded-md bg-muted" />}>
